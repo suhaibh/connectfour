@@ -9,13 +9,12 @@ body {
 
 #connect4 {
 	background-color: rgb(255,218,185);
-	margin: 5rem auto;
-	max-width: 1200px;
+	margin: 5rem 3rem;
+	max-width: 900px;
 }
 
 .row {
 	display: flex;
-	align-items: center;
 	justify-content: space-around;
 	margin-top: 3rem;
 	padding: 1rem;
@@ -27,8 +26,8 @@ body {
 }
 
 .col {
-	height: 4rem;
-	width: 4rem;
+	height: 5rem;
+	width: 5rem;
 	border-radius: 50%;
 }
 
