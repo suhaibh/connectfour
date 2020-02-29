@@ -53,6 +53,11 @@ class Connect4 {
 		$board.on('click', '.col.empty', function() {
 			console.log(this);
 			const col = $(this).data('col');
+			// const row = $(this).data('row'); when this was set the click would make the cirlce 
+			// 																	we were clicking the target instead of the last empty cell
+			//																	Resulted in the while loop in checkDirection not being executed because $next.data('player') would come up as undefined
+			//																	The loop would only run at the second to last because when it did the -1 direction to look at the row below it, 
+			//																	it would finally trigger as having $next.data('player') equal something
 			//const row = $(this).data('row'); // TEST - REMOVE THIS
 			const $lastEmptyCell = findLastEmptyCell(col);
 			//console.log("row: " + row);
@@ -71,7 +76,7 @@ class Connect4 {
 
 			const winner = that.checkForWinner(
 				$lastEmptyCell.data('row'), 
-				$lastEmptyCell.data('col'))
+				$lastEmptyCell.data('col')) // explicitly setting this instead of using col and row makes it so we're targeting the last empty cell's data attrs not the one we're clicking
 			if (winner) {
 				alert(`Game Over! ${that.player} has won!`);
 				return;
