@@ -23,7 +23,6 @@ class Connect4 {
 			}
 			$board.append($row); // this adds 1 $row element which now has 7 $col in it to the board
 		}
-		console.log($board.html());
 	}
 
 	setupEventListners() {
@@ -32,7 +31,7 @@ class Connect4 {
 
 		function findLastEmptyCell(col) {
 			const cells = $(`.col[data-col='${col}']`);
-			for (let i = cells.length - 1; i>= 0; i-- ) {
+			for (let i = cells.length - 1; i >= 0; i-- ) {
 				const $cell = $(cells[i]);
 				if ($cell.hasClass('empty')) {
 					return $cell;
@@ -41,23 +40,102 @@ class Connect4 {
 			return null;
 		}
 
-		$board.on('mouseenter', '.col.empty', function(){
+		$board.on('mouseenter', '.col.empty', function() {
 			const col = $(this).data('col');
 			const $lastEmptyCell = findLastEmptyCell(col);
 			$lastEmptyCell.addClass(`next-${that.player}`);
 		})
 
-		$board.on('mouseleave', '.col', function (){
+		$board.on('mouseleave', '.col', function () {
 			$('.col').removeClass(`next-${that.player}`);
 		})
 
-		$board.on('click', '.col.empty', function(){
+		$board.on('click', '.col.empty', function() {
+			console.log(this);
 			const col = $(this).data('col');
+			//const row = $(this).data('row'); // TEST - REMOVE THIS
 			const $lastEmptyCell = findLastEmptyCell(col);
+			//console.log("row: " + row);
+			console.log("col: " + col);
+			//console.log("data-row: " + $lastEmptyCell.data('row'));
+			//console.log("data-col: " + $lastEmptyCell.data('col'));
 			$lastEmptyCell.removeClass(`empty next-${that.player}`);
 			$lastEmptyCell.addClass(that.player);
+			$lastEmptyCell.data('player', that.player);
+
+			/*const winner = that.checkForWinner(col, row)
+			if (winner) {
+				alert(`Game Over! ${that.player} has won!`);
+				return;
+			}*/
+
+			const winner = that.checkForWinner(
+				$lastEmptyCell.data('row'), 
+				$lastEmptyCell.data('col'))
+			if (winner) {
+				alert(`Game Over! ${that.player} has won!`);
+				return;
+			}
+
 			that.player = (that.player =='red') ? 'black' : 'red';
 			$(this).trigger('mouseenter');
 		})
+	}
+
+	checkForWinner(row, col) {
+		const that = this;
+		//console.log("that " + JSON.stringify(that));
+		//console.log("col: " + col);
+		//console.log("row: " + row);
+
+		function $getCell(i, j) {
+			return $(`.col[data-row='${i}'][data-col='${j}']`);
+		}
+
+		function checkDirection(direction) {
+			let total = 0;
+			//console.log("the i value we're adding: " + direction.i);
+			//console.log("the j value we're adding: " + direction.j);
+			//console.log("new direction");
+			let i = row + direction.i;
+			console.log("i/row: " + i);
+			let j = col + direction.j;
+			console.log("j/col: " + j)
+			let $next = $getCell(i, j);
+			//console.log("next i/row: " + $next.data('row'));
+			//console.log("next j/col: " + $next.data('col'));
+			console.log($next.data('player'));
+			//console.log("end one direction");
+			while (i >= 0 &&
+				i < that.ROWS &&
+				j >= 0 &&
+				j < that.COLS &&
+				$next.data('player') === that.player) {
+				total++;
+				console.log(total);
+				i += direction.i;
+				j += direction.j;
+				$next = $getCell(i, j);
+			}
+			return total;
+		}
+
+		function checkWin(directionA, directionB) {
+			const total = 1 +
+				checkDirection(directionA) +
+				checkDirection(directionB);
+			//console.log("total: " + total);
+			if (total >= 4) {
+				return that.player;
+			} else {
+				return null;
+			}
+		}
+
+		function checkVerticals(){
+			return checkWin({i: -1, j: 0}, {i: 1, j: 0});
+		}
+		
+		return checkVerticals();
 	}
 }

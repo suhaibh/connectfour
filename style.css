@@ -23,7 +23,6 @@ body {
 
 .empty {
 	background-color: rgb(255,255,224);
-	cursor: pointer;
 }
 
 .col.empty {
