@@ -54,10 +54,10 @@ class Connect4 {
 			console.log(this);
 			const col = $(this).data('col');
 			// const row = $(this).data('row'); when this was set the click would make the cirlce 
-			// 																	we were clicking the target instead of the last empty cell
-			//																	Resulted in the while loop in checkDirection not being executed because $next.data('player') would come up as undefined
-			//																	The loop would only run at the second to last because when it did the -1 direction to look at the row below it, 
-			//																	it would finally trigger as having $next.data('player') equal something
+			// 									we were clicking the target instead of the last empty cell
+			//									Resulted in the while loop in checkDirection not being executed because $next.data('player') would come up as undefined
+			//									The loop would only run at the second to last because when it did the -1 direction to look at the row below it, 
+			//									it would finally trigger as having $next.data('player') equal something
 			//const row = $(this).data('row'); // TEST - REMOVE THIS
 			const $lastEmptyCell = findLastEmptyCell(col);
 			//console.log("row: " + row);
@@ -83,9 +83,31 @@ class Connect4 {
 			}
 
 			that.player = (that.player =='red') ? 'black' : 'red';
+			
 			// computer turn
+			const $compEmptyCell = findLastEmptyCell(4);
+			console.log($compEmptyCell.data('col'));
+			$compEmptyCell.removeClass('empty');
+			$compEmptyCell.addClass(that.player);
+			$compEmptyCell.data('player', that.player);
+
+			const compWinner = that.checkForWinner(
+				$compEmptyCell.data('row'),
+				$compEmptyCell.data('col'))
+			if (compWinner) {
+				alert(`Game Over! ${that.player} has won!`);
+			}
+			that.player = (that.player =='black') ? 'red' : 'black';
 			//$(this).trigger('mouseenter');
 		})
+	}
+
+	computerTurn() {
+		const that = this;
+		// console.log(that);
+		// console.log(that.player)
+
+		that.player = 'red';
 	}
 
 	checkForWinner(row, col) {
@@ -104,13 +126,13 @@ class Connect4 {
 			//console.log("the j value we're adding: " + direction.j);
 			//console.log("new direction");
 			let i = row + direction.i;
-			console.log("i/row: " + i);
+			// IMPORTANT console.log("i/row: " + i);
 			let j = col + direction.j;
-			console.log("j/col: " + j)
+			// IMPORTANT console.log("j/col: " + j)
 			let $next = $getCell(i, j);
 			//console.log("next i/row: " + $next.data('row'));
 			//console.log("next j/col: " + $next.data('col'));
-			console.log($next.data('player'));
+			// IMPORTANT console.log($next.data('player'));
 			//console.log("end one direction");
 			while (i >= 0 &&
 				i < that.ROWS &&
@@ -118,14 +140,14 @@ class Connect4 {
 				j < that.COLS &&
 				$next.data('player') === that.player) {
 				total++;
-				console.log("total: " + total);
-				console.log("in the loop direction.i " + direction.i);
-				console.log("in the loop direction.j " + direction.j);
+				// IMPORTANT console.log("total: " + total);
+				// IMPORTANT console.log("in the loop direction.i " + direction.i);
+				// IMPORTANT console.log("in the loop direction.j " + direction.j);
 				i += direction.i;
 				j += direction.j;
 				$next = $getCell(i, j);
-				console.log("in the loop after addition i/row " + i);
-				console.log("in the loop after addition j/col " + j);
+				// IMPORTANT console.log("in the loop after addition i/row " + i);
+				// IMPORTANT console.log("in the loop after addition j/col " + j);
 				//console.log("in the loop $next row " + $next.data('row'));
 			}
 			return total;
