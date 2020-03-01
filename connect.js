@@ -83,7 +83,8 @@ class Connect4 {
 			}
 
 			that.player = (that.player =='red') ? 'black' : 'red';
-			$(this).trigger('mouseenter');
+			// computer turn
+			//$(this).trigger('mouseenter');
 		})
 	}
 
