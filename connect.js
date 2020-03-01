@@ -11,6 +11,10 @@ class Connect4 {
 
 	createGrid() {
 		const $board = $(this.selector);
+		const $restartButton = $('#restart');
+		
+		this.isGameOver = false;
+		this.player = 'red';
 		for (let row = 0; row < this.ROWS; row++) {
 			const $row = $('<div>')
 				.addClass('row');
@@ -24,10 +28,12 @@ class Connect4 {
 			}
 			$board.append($row); // this adds 1 $row element which now has 7 $col in it to the board
 		}
+		$restartButton.css("visibility", "visible");
 	}
 
 	setupEventListners() {
 		const $board = $(this.selector);
+		const $resetButton = $('#restart');
 		const that = this;
 
 		function findLastEmptyCell(col) {
@@ -106,6 +112,11 @@ class Connect4 {
 			that.player = (that.player =='black') ? 'red' : 'black';
 			//$(this).trigger('mouseenter');*/
 		})
+
+		$resetButton.on('click', function(){
+			that.restart();
+		})
+
 	}
 
 	checkForWinner(row, col) {
@@ -180,5 +191,10 @@ class Connect4 {
 		}	
 		
 		return checkVerticals() || checkHorizontals() || checkDiagonalBltoTr() || checkDiagonalBrtoTl();
+	}
+
+	restart () {
+		$(this.selector).empty();
+		this.createGrid();
 	}
 }
