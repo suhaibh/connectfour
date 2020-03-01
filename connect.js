@@ -117,10 +117,15 @@ class Connect4 {
 				j < that.COLS &&
 				$next.data('player') === that.player) {
 				total++;
-				console.log(total);
+				console.log("total: " + total);
+				console.log("in the loop direction.i " + direction.i);
+				console.log("in the loop direction.j " + direction.j);
 				i += direction.i;
 				j += direction.j;
 				$next = $getCell(i, j);
+				console.log("in the loop after addition i/row " + i);
+				console.log("in the loop after addition j/col " + j);
+				//console.log("in the loop $next row " + $next.data('row'));
 			}
 			return total;
 		}
@@ -140,7 +145,19 @@ class Connect4 {
 		function checkVerticals(){
 			return checkWin({i: -1, j: 0}, {i: 1, j: 0});
 		}
+
+		function checkHorizontals() {
+			return checkWin({i: 0, j: -1}, {i: 0, j: 1})
+		}
+
+		function checkDiagonalBltoTr() {
+			return checkWin({i: 1, j: -1}, {i: -1, j: 1})
+		}
+
+		function checkDiagonalBrtoTl(){
+			return checkWin({i: 1, j: 1}, {i: -1, j: -1})
+		}	
 		
-		return checkVerticals();
+		return checkVerticals() || checkHorizontals() || checkDiagonalBltoTr() || checkDiagonalBrtoTl();
 	}
 }
