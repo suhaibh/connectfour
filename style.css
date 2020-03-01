@@ -21,10 +21,6 @@ body {
 	padding: 1rem;
 }
 
-.empty {
-	background-color: rgb(255,255,224);
-}
-
 .col.empty {
 	cursor: pointer;
 }
@@ -33,6 +29,7 @@ body {
 	height: 6rem;
 	width: 6rem;
 	border-radius: 50%;
+	background-color: rgb(255,255,224);
 }
 
 .next-red {

@@ -3,6 +3,7 @@ class Connect4 {
 		this.ROWS = 6;
 		this.COLS = 7;
 		this.player = 'red';
+		this.isGameOver = false;
 		this.selector = selector
 		this.createGrid();
 		this.setupEventListners();
@@ -41,17 +42,20 @@ class Connect4 {
 		}
 
 		$board.on('mouseenter', '.col.empty', function() {
+			if (that.isGameOver) return;
 			const col = $(this).data('col');
 			const $lastEmptyCell = findLastEmptyCell(col);
 			$lastEmptyCell.addClass(`next-${that.player}`);
 		})
 
 		$board.on('mouseleave', '.col', function () {
+			if (that.isGameOver) return;
 			$('.col').removeClass(`next-${that.player}`);
 		})
 
 		$board.on('click', '.col.empty', function() {
 			console.log(this);
+			if (that.isGameOver) return;
 			const col = $(this).data('col');
 			// const row = $(this).data('row'); when this was set the click would make the cirlce 
 			// 									we were clicking the target instead of the last empty cell
@@ -78,14 +82,16 @@ class Connect4 {
 				$lastEmptyCell.data('row'), 
 				$lastEmptyCell.data('col')) // explicitly setting this instead of using col and row makes it so we're targeting the last empty cell's data attrs not the one we're clicking
 			if (winner) {
+				that.isGameOver = true;
 				alert(`Game Over! ${that.player} has won!`);
+				$('.col.empty').removeClass('empty');
 				return;
 			}
 
 			that.player = (that.player =='red') ? 'black' : 'red';
 			
 			// computer turn
-			const $compEmptyCell = findLastEmptyCell(4);
+			/*const $compEmptyCell = findLastEmptyCell(4);
 			console.log($compEmptyCell.data('col'));
 			$compEmptyCell.removeClass('empty');
 			$compEmptyCell.addClass(that.player);
@@ -98,16 +104,8 @@ class Connect4 {
 				alert(`Game Over! ${that.player} has won!`);
 			}
 			that.player = (that.player =='black') ? 'red' : 'black';
-			//$(this).trigger('mouseenter');
+			//$(this).trigger('mouseenter');*/
 		})
-	}
-
-	computerTurn() {
-		const that = this;
-		// console.log(that);
-		// console.log(that.player)
-
-		that.player = 'red';
 	}
 
 	checkForWinner(row, col) {
