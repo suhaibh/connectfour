@@ -60,7 +60,7 @@ class Connect4 {
 		})
 
 		$board.on('click', '.col.empty', function() {
-			console.log(this);
+			//console.log(this);
 			if (that.isGameOver) return;
 			const col = $(this).data('col');
 			// const row = $(this).data('row'); when this was set the click would make the cirlce 
@@ -71,7 +71,7 @@ class Connect4 {
 			//const row = $(this).data('row'); // TEST - REMOVE THIS
 			const $lastEmptyCell = findLastEmptyCell(col);
 			//console.log("row: " + row);
-			console.log("col: " + col);
+			//console.log("col: " + col);
 			//console.log("data-row: " + $lastEmptyCell.data('row'));
 			//console.log("data-col: " + $lastEmptyCell.data('col'));
 			$lastEmptyCell.removeClass(`empty next-${that.player}`);
@@ -94,11 +94,24 @@ class Connect4 {
 				return;
 			}
 
+			// <------ TO DO ---------->
+			//add a check for $('.col.empty').length == 0 for a popup to say draw
+
 			that.player = (that.player =='red') ? 'black' : 'red';
 			
+			
 			// computer turn
-			/*const $compEmptyCell = findLastEmptyCell(4);
-			console.log($compEmptyCell.data('col'));
+			function getRandomNum(max) {
+				return Math.floor(Math.random() * Math.floor(max));
+			}
+
+			const allEmptyCells = $('.col.empty');
+			const randEmptyCellIndex = getRandomNum(allEmptyCells.length);
+			const randCell = allEmptyCells[randEmptyCellIndex];
+
+			const compCol = $(randCell).data('col');
+			const $compEmptyCell = findLastEmptyCell(compCol);
+			//console.log($compEmptyCell.data('col'));
 			$compEmptyCell.removeClass('empty');
 			$compEmptyCell.addClass(that.player);
 			$compEmptyCell.data('player', that.player);
@@ -110,7 +123,7 @@ class Connect4 {
 				alert(`Game Over! ${that.player} has won!`);
 			}
 			that.player = (that.player =='black') ? 'red' : 'black';
-			//$(this).trigger('mouseenter');*/
+			//$(this).trigger('mouseenter');
 		})
 
 		$resetButton.on('click', function(){
