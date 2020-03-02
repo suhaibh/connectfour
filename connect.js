@@ -22,6 +22,7 @@ class Connect4 {
 			for (let col = 0; col < this.COLS; col++) {
 				const $col = $('<div>')
 					.addClass('col empty')
+					.addClass(`col-${col}`)
 					.attr('data-col', col)
 					.attr('data-row', row);
 					$row.append($col);
