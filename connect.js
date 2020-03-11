@@ -17,14 +17,17 @@ class Connect4 {
 		this.player = 'red';
 		for (let row = 0; row < this.ROWS; row++) {
 			const $row = $('<div>')
-				.addClass('row');
+				.addClass('row')
+				.addClass(`row-${row}`);
 			// this loop results in 7 div#col being appended to the newly created $row element
 			for (let col = 0; col < this.COLS; col++) {
+				const $token = $('<div>').addClass('token');
 				const $col = $('<div>')
 					.addClass('col empty')
 					.addClass(`col-${col}`)
 					.attr('data-col', col)
-					.attr('data-row', row);
+					.attr('data-row', row)
+					.append($token);
 					$row.append($col);
 			}
 			$board.append($row); // this adds 1 $row element which now has 7 $col in it to the board
@@ -71,12 +74,14 @@ class Connect4 {
 			//									it would finally trigger as having $next.data('player') equal something
 			//const row = $(this).data('row'); // TEST - REMOVE THIS
 			const $lastEmptyCell = findLastEmptyCell(col);
+			const $child = $lastEmptyCell.children();
 			//console.log("row: " + row);
 			//console.log("col: " + col);
 			//console.log("data-row: " + $lastEmptyCell.data('row'));
 			//console.log("data-col: " + $lastEmptyCell.data('col'));
 			$lastEmptyCell.removeClass(`empty next-${that.player}`);
-			$lastEmptyCell.addClass(that.player);
+			//$lastEmptyCell.addClass(that.player);
+			$child.addClass('drop-red');
 			$lastEmptyCell.data('player', that.player);
 
 			/*const winner = that.checkForWinner(col, row)
@@ -101,7 +106,8 @@ class Connect4 {
 			that.player = (that.player =='red') ? 'black' : 'red';
 			
 			
-			// computer turn
+			// COMPUTER TURN
+
 			function getRandomNum(max) {
 				return Math.floor(Math.random() * Math.floor(max));
 			}
@@ -112,10 +118,13 @@ class Connect4 {
 
 			const compCol = $(randCell).data('col');
 			const $compEmptyCell = findLastEmptyCell(compCol);
-			//console.log($compEmptyCell.data('col'));
-			$compEmptyCell.removeClass('empty');
-			$compEmptyCell.addClass(that.player);
+			const $compChild = $compEmptyCell.children();
+			
+			// <-------------- SET TIME OUT SHOULD BEGIN HERE ------------>
+
+			$compChild.addClass('drop-black');
 			$compEmptyCell.data('player', that.player);
+			$compEmptyCell.removeClass('empty');
 
 			const compWinner = that.checkForWinner(
 				$compEmptyCell.data('row'),
@@ -124,7 +133,8 @@ class Connect4 {
 				alert(`Game Over! ${that.player} has won!`);
 			}
 			that.player = (that.player =='black') ? 'red' : 'black';
-			//$(this).trigger('mouseenter');
+
+			// <-------------- SET TIME OUT SHOULD END HERE ------------>
 		})
 
 		$resetButton.on('click', function(){
