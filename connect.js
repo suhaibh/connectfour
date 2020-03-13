@@ -39,6 +39,7 @@ class Connect4 {
 		const $board = $(this.selector);
 		const $resetButton = $('#restart');
 		const that = this;
+		var animationComplete = true;
 
 		function findLastEmptyCell(col) {
 			const cells = $(`.col[data-col='${col}']`);
@@ -66,75 +67,68 @@ class Connect4 {
 		$board.on('click', '.col.empty', function() {
 			//console.log(this);
 			if (that.isGameOver) return;
-			const col = $(this).data('col');
-			// const row = $(this).data('row'); when this was set the click would make the cirlce 
-			// 									we were clicking the target instead of the last empty cell
-			//									Resulted in the while loop in checkDirection not being executed because $next.data('player') would come up as undefined
-			//									The loop would only run at the second to last because when it did the -1 direction to look at the row below it, 
-			//									it would finally trigger as having $next.data('player') equal something
-			//const row = $(this).data('row'); // TEST - REMOVE THIS
-			const $lastEmptyCell = findLastEmptyCell(col);
-			const $child = $lastEmptyCell.children();
-			//console.log("row: " + row);
-			//console.log("col: " + col);
-			//console.log("data-row: " + $lastEmptyCell.data('row'));
-			//console.log("data-col: " + $lastEmptyCell.data('col'));
-			$lastEmptyCell.removeClass(`empty next-${that.player}`);
-			//$lastEmptyCell.addClass(that.player);
-			$child.addClass('drop-red');
-			$lastEmptyCell.data('player', that.player);
+			if (animationComplete) {
+				animationComplete = false;
+				const col = $(this).data('col');
+				// const row = $(this).data('row'); when this was set the click would make the cirlce 
+				// 									we were clicking the target instead of the last empty cell
+				//									Resulted in the while loop in checkDirection not being executed because $next.data('player') would come up as undefined
+				//									The loop would only run at the second to last because when it did the -1 direction to look at the row below it, 
+				//									it would finally trigger as having $next.data('player') equal something
+				//const row = $(this).data('row'); // TEST - REMOVE THIS
+				const $lastEmptyCell = findLastEmptyCell(col);
+				const $child = $lastEmptyCell.children();
+				$lastEmptyCell.removeClass(`empty next-${that.player}`);
+				$child.addClass('drop-red');
+				$lastEmptyCell.data('player', that.player);
 
-			/*const winner = that.checkForWinner(col, row)
-			if (winner) {
-				alert(`Game Over! ${that.player} has won!`);
-				return;
-			}*/
+				const winner = that.checkForWinner(
+					$lastEmptyCell.data('row'), 
+					$lastEmptyCell.data('col')) // explicitly setting this instead of using col and row makes it so we're targeting the last empty cell's data attrs not the one we're clicking
+				if (winner) {
+					that.isGameOver = true;
+					animationComplete = true;
+					alert(`Game Over! ${that.player} has won!`);
+					$('.col.empty').removeClass('empty');
+					return;
+				}
 
-			const winner = that.checkForWinner(
-				$lastEmptyCell.data('row'), 
-				$lastEmptyCell.data('col')) // explicitly setting this instead of using col and row makes it so we're targeting the last empty cell's data attrs not the one we're clicking
-			if (winner) {
-				that.isGameOver = true;
-				alert(`Game Over! ${that.player} has won!`);
-				$('.col.empty').removeClass('empty');
-				return;
+				// <------ TO DO ---------->
+				//add a check for $('.col.empty').length == 0 for a popup to say draw
+
+				that.player = (that.player =='red') ? 'black' : 'red';
+				
+				
+				// COMPUTER TURN
+
+				function getRandomNum(max) {
+					return Math.floor(Math.random() * Math.floor(max));
+				}
+
+				const allEmptyCells = $('.col.empty');
+				const randEmptyCellIndex = getRandomNum(allEmptyCells.length);
+				const randCell = allEmptyCells[randEmptyCellIndex];
+
+				const compCol = $(randCell).data('col');
+				const $compEmptyCell = findLastEmptyCell(compCol);
+				const $compChild = $compEmptyCell.children();
+				
+				setTimeout(function(){
+					$compChild.addClass('drop-black');
+					$compEmptyCell.data('player', that.player);
+					$compEmptyCell.removeClass('empty');
+
+					const compWinner = that.checkForWinner(
+						$compEmptyCell.data('row'),
+						$compEmptyCell.data('col'))
+					if (compWinner) {
+						alert(`Game Over! ${that.player} has won!`);
+					}
+					that.player = (that.player =='black') ? 'red' : 'black';
+					animationComplete = true;
+				}, 500)
 			}
-
-			// <------ TO DO ---------->
-			//add a check for $('.col.empty').length == 0 for a popup to say draw
-
-			that.player = (that.player =='red') ? 'black' : 'red';
-			
-			
-			// COMPUTER TURN
-
-			function getRandomNum(max) {
-				return Math.floor(Math.random() * Math.floor(max));
-			}
-
-			const allEmptyCells = $('.col.empty');
-			const randEmptyCellIndex = getRandomNum(allEmptyCells.length);
-			const randCell = allEmptyCells[randEmptyCellIndex];
-
-			const compCol = $(randCell).data('col');
-			const $compEmptyCell = findLastEmptyCell(compCol);
-			const $compChild = $compEmptyCell.children();
-			
-			// <-------------- SET TIME OUT SHOULD BEGIN HERE ------------>
-
-			$compChild.addClass('drop-black');
-			$compEmptyCell.data('player', that.player);
-			$compEmptyCell.removeClass('empty');
-
-			const compWinner = that.checkForWinner(
-				$compEmptyCell.data('row'),
-				$compEmptyCell.data('col'))
-			if (compWinner) {
-				alert(`Game Over! ${that.player} has won!`);
-			}
-			that.player = (that.player =='black') ? 'red' : 'black';
-
-			// <-------------- SET TIME OUT SHOULD END HERE ------------>
+		
 		})
 
 		$resetButton.on('click', function(){
@@ -145,9 +139,6 @@ class Connect4 {
 
 	checkForWinner(row, col) {
 		const that = this;
-		//console.log("that " + JSON.stringify(that));
-		//console.log("col: " + col);
-		//console.log("row: " + row);
 
 		function $getCell(i, j) {
 			return $(`.col[data-row='${i}'][data-col='${j}']`);
@@ -181,7 +172,6 @@ class Connect4 {
 				$next = $getCell(i, j);
 				// IMPORTANT console.log("in the loop after addition i/row " + i);
 				// IMPORTANT console.log("in the loop after addition j/col " + j);
-				//console.log("in the loop $next row " + $next.data('row'));
 			}
 			return total;
 		}
