@@ -24,7 +24,6 @@ class Connect4 {
 				const $token = $('<div>').addClass('token');
 				const $col = $('<div>')
 					.addClass('col empty')
-					.addClass(`col-${col}`)
 					.attr('data-col', col)
 					.attr('data-row', row)
 					.append($token);
@@ -65,17 +64,10 @@ class Connect4 {
 		})
 
 		$board.on('click', '.col.empty', function() {
-			//console.log(this);
 			if (that.isGameOver) return;
 			if (animationComplete) {
 				animationComplete = false;
 				const col = $(this).data('col');
-				// const row = $(this).data('row'); when this was set the click would make the cirlce 
-				// 									we were clicking the target instead of the last empty cell
-				//									Resulted in the while loop in checkDirection not being executed because $next.data('player') would come up as undefined
-				//									The loop would only run at the second to last because when it did the -1 direction to look at the row below it, 
-				//									it would finally trigger as having $next.data('player') equal something
-				//const row = $(this).data('row'); // TEST - REMOVE THIS
 				const $lastEmptyCell = findLastEmptyCell(col);
 				const $child = $lastEmptyCell.children();
 				$lastEmptyCell.removeClass(`empty next-${that.player}`);
@@ -84,7 +76,7 @@ class Connect4 {
 
 				const winner = that.checkForWinner(
 					$lastEmptyCell.data('row'), 
-					$lastEmptyCell.data('col')) // explicitly setting this instead of using col and row makes it so we're targeting the last empty cell's data attrs not the one we're clicking
+					$lastEmptyCell.data('col'))
 				if (winner) {
 					that.isGameOver = true;
 					animationComplete = true;
@@ -99,19 +91,38 @@ class Connect4 {
 				that.player = (that.player =='red') ? 'black' : 'red';
 				
 				
-				// COMPUTER TURN
+				// <------- COMPUTER TURN ------->
 
-				function getRandomNum(max) {
-					return Math.floor(Math.random() * Math.floor(max));
+				function randomCol() {
+					return Math.floor(Math.random() * Math.floor(that.COLS));
 				}
 
-				const allEmptyCells = $('.col.empty');
-				const randEmptyCellIndex = getRandomNum(allEmptyCells.length);
-				const randCell = allEmptyCells[randEmptyCellIndex];
+				// create options arrays:
+					// options = [] // 
+					// options[0] = [] // comp wins 
+					// options[1] = [] // player wins
+					// options[2] = [] // no signifance
+					// options[3] = [] // this action causes opponent to win on next turn
 
-				const compCol = $(randCell).data('col');
-				const $compEmptyCell = findLastEmptyCell(compCol);
-				const $compChild = $compEmptyCell.children();
+				// iterate through each column, 
+				// for(let i = 0; i < that.COLS; i ++) { 
+					// compEmptyCell = findLastEmptyCell(i); 
+					// 	if checkForWinner($compEmptyCell) == 'black', 
+						// options[0].push(compEmptyCell.data('col'))
+					// 	else 
+						// change compEmptyCell.data('player', 'red');
+						// if (checkforWinner($compEmptyCell) == 'red');
+							// options[1].push(compEmptyCell.data('col'));
+				// }
+				//change compEmptyCell.data('player', that.player)
+				
+				// make sure you call $compEmptyCell.removeData('player') after the if statement and 
+				// before starting actual move
+
+				// MISC: might have to create a data attribute for empty and use that in findLastEmptyCell
+
+				var $compEmptyCell = findLastEmptyCell(randomCol());
+				var $compChild = $compEmptyCell.children();
 				
 				setTimeout(function(){
 					$compChild.addClass('drop-black');
@@ -146,32 +157,18 @@ class Connect4 {
 
 		function checkDirection(direction) {
 			let total = 0;
-			//console.log("the i value we're adding: " + direction.i);
-			//console.log("the j value we're adding: " + direction.j);
-			//console.log("new direction");
 			let i = row + direction.i;
-			// IMPORTANT console.log("i/row: " + i);
 			let j = col + direction.j;
-			// IMPORTANT console.log("j/col: " + j)
 			let $next = $getCell(i, j);
-			//console.log("next i/row: " + $next.data('row'));
-			//console.log("next j/col: " + $next.data('col'));
-			// IMPORTANT console.log($next.data('player'));
-			//console.log("end one direction");
 			while (i >= 0 &&
 				i < that.ROWS &&
 				j >= 0 &&
 				j < that.COLS &&
 				$next.data('player') === that.player) {
 				total++;
-				// IMPORTANT console.log("total: " + total);
-				// IMPORTANT console.log("in the loop direction.i " + direction.i);
-				// IMPORTANT console.log("in the loop direction.j " + direction.j);
 				i += direction.i;
 				j += direction.j;
 				$next = $getCell(i, j);
-				// IMPORTANT console.log("in the loop after addition i/row " + i);
-				// IMPORTANT console.log("in the loop after addition j/col " + j);
 			}
 			return total;
 		}
@@ -180,7 +177,6 @@ class Connect4 {
 			const total = 1 +
 				checkDirection(directionA) +
 				checkDirection(directionB);
-			//console.log("total: " + total);
 			if (total >= 4) {
 				return that.player;
 			} else {

@@ -5,6 +5,7 @@
 
 body {
 	background-color: rgb(255,255,224);
+	max-width: 1400px;
 }
 
 .container {
@@ -12,8 +13,8 @@ body {
 }
 
 #connect4 {
-	margin: 2rem auto;
-	max-width: 1200px;
+	margin: 5rem 1rem 1rem auto;
+	width: 700px;
 	flex: 1;
 	overflow: hidden;
 }
@@ -22,17 +23,49 @@ body {
 	display: flex;
 	align-items: center;
 	justify-content: space-around;
-	margin-top: 3rem;
-	padding: 1rem;
+	margin-top: 1.5rem;
 }
+
+/* 
+
+FOR FINAL LAYOUT ADJUST TO THIS
+
+.body {
+	max-width: 1400px;
+}
+
+#connect4 {
+	max-width: 700px;
+	margin: 2rem 1rem 1rem auto;
+	flex: 1;
+	overflow: hidden;
+}
+
+.row {
+	display: flex;
+	align-items: center;
+	justify-content: space-around;
+	margin-top: 1.5rem;
+	padding: 0;
+}
+
+.col {
+	height: 4rem;
+	width: 4rem;
+	border-radius: 50%;
+	background-color: rgb(255,218,185);
+	position: relative;
+}
+
+*/
 
 .col.empty {
 	cursor: pointer;
 }
 
 .col {
-	height: 6rem;
-	width: 6rem;
+	height: 4rem;
+	width: 4rem;
 	border-radius: 50%;
 	background-color: rgb(255,218,185);
 	position: relative;
@@ -118,5 +151,38 @@ body {
 	100% {
 		top: 0;
 		background-color: black;
+	}
+}
+
+@media only screen and (max-width: 25em) {
+	.row {
+		margin-top: 1rem;
+		padding: .5rem;
+	}
+
+	.col {
+		height: 2rem;
+		width: 2rem;
+	}
+}
+
+@media only screen and (max-width: 51em) {
+	#connect4 {
+		max-width: 500px;
+		margin: 2rem auto 1rem auto;
+	}
+
+	.col {
+		height: 2rem;
+		width: 2rem;
+	}
+
+	.row {
+		margin-top: 1rem;
+		padding: 0;
+	}
+
+	#restart {
+		padding: 1rem;
 	}
 }
