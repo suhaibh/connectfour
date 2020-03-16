@@ -73,6 +73,7 @@ class Connect4 {
 				$lastEmptyCell.removeClass(`empty next-${that.player}`);
 				$child.addClass('drop-red');
 				$lastEmptyCell.data('player', that.player);
+				$lastEmptyCell.attr('player', that.player);
 
 				const winner = that.checkForWinner(
 					$lastEmptyCell.data('row'), 
@@ -90,12 +91,56 @@ class Connect4 {
 
 				that.player = (that.player =='red') ? 'black' : 'red';
 				
-				
 				// <------- COMPUTER TURN ------->
 
-				function randomCol() {
-					return Math.floor(Math.random() * Math.floor(that.COLS));
+				let options = [];
+				options[0] = [];
+				options[1] = [];
+				options[2] = [];
+				options[3] = [];
+
+				//console.log("xxxxxxXXXXX COMPUTER SIM START XXXXXxxxxxx");
+				for (let i = 0; i < that.COLS; i++) {
+					let compCell = findLastEmptyCell(i);
+					if (compCell == null) {
+						continue;
+					}
+					//console.log("current column loop: " + i);
+					//console.log(`<--------------- simulate black's turn - ${i} ------------>`);
+					//console.log("in the for loop current player: " + that.player);
+					compCell.data('player', that.player);
+					compCell.attr('player', that.player);
+					// console.log(compCell.data('player'));
+					if (that.checkForWinner(compCell.data('row'), compCell.data('col')) === 'black') {
+						options[0].push(compCell.data('col'));
+						//console.log(options);
+					} else {
+						//console.log(`<--------------- simulate red's turn - ${i} ------------>`);
+						that.player = (that.player =='black') ? 'red' : 'black';
+						//debugger;
+						//console.log("in the for loop current row " + compCell.data('row'));
+						//console.log("in the for loop current col " + compCell.data('col'));
+						compCell.removeData('player');
+						compCell.data('player', that.player);
+						compCell.attr('player', that.player);
+						compCell.removeClass('empty');
+						//console.log('current player: ' + that.player);
+						//console.log("compCell.data('player'): " + compCell.data('player'));
+						if (that.checkForWinner(compCell.data('row'), compCell.data('col')) === 'red') {
+							options[1].push(compCell.data('col'));
+							//console.log(options);
+						} else {
+							options[2].push(compCell.data('col'));
+						}
+					}
+					compCell.removeData('player');
+					compCell.removeAttr('player');
+					that.player = "black";
+					//console.log("end of for current player: " + that.player);
+					compCell.addClass('empty');
+					console.log(options);
 				}
+				//console.log("COMPUTER SIM END");
 
 				// create options arrays:
 					// options = [] // 
@@ -121,12 +166,24 @@ class Connect4 {
 
 				// MISC: might have to create a data attribute for empty and use that in findLastEmptyCell
 
-				var $compEmptyCell = findLastEmptyCell(randomCol());
-				var $compChild = $compEmptyCell.children();
+				function getRandomNum(max) {
+					return Math.floor(Math.random() * Math.floor(max));
+				}
+
+				const allEmptyCells = $('.col.empty');
+				const randEmptyCellIndex = getRandomNum(allEmptyCells.length);
+				const randCell = allEmptyCells[randEmptyCellIndex];
+
+				const compCol = $(randCell).data('col');
+				const $compEmptyCell = findLastEmptyCell(compCol);
+				const $compChild = $compEmptyCell.children();
 				
 				setTimeout(function(){
+					//console.log("<-------- start of computer/black turn ------->");
+					//console.log("should be black's turn, actual turn is: " + that.player);
 					$compChild.addClass('drop-black');
 					$compEmptyCell.data('player', that.player);
+					$compEmptyCell.attr('player', that.player);
 					$compEmptyCell.removeClass('empty');
 
 					const compWinner = that.checkForWinner(
@@ -160,6 +217,9 @@ class Connect4 {
 			let i = row + direction.i;
 			let j = col + direction.j;
 			let $next = $getCell(i, j);
+			//console.log($next);
+			//console.log("next cell player: " + $next.data('player'));
+			//console.log("current player evaulation: " + that.player);
 			while (i >= 0 &&
 				i < that.ROWS &&
 				j >= 0 &&
@@ -185,18 +245,22 @@ class Connect4 {
 		}
 
 		function checkVerticals(){
+			//console.log("<-------- checking verticals ------>")
 			return checkWin({i: -1, j: 0}, {i: 1, j: 0});
 		}
 
 		function checkHorizontals() {
+			//console.log("<-------- checking horizontals --------->")
 			return checkWin({i: 0, j: -1}, {i: 0, j: 1})
 		}
 
 		function checkDiagonalBltoTr() {
+			//console.log("<-------- checking checkDiagonal bot left to Top right --------->")
 			return checkWin({i: 1, j: -1}, {i: -1, j: 1})
 		}
 
 		function checkDiagonalBrtoTl(){
+			//console.log("<-------- checking checkDiagonal bot right to Top left --------->")
 			return checkWin({i: 1, j: 1}, {i: -1, j: -1})
 		}	
 		
