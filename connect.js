@@ -140,42 +140,20 @@ class Connect4 {
 					compCell.addClass('empty');
 					console.log(options);
 				}
-				//console.log("COMPUTER SIM END");
-
-				// create options arrays:
-					// options = [] // 
-					// options[0] = [] // comp wins 
-					// options[1] = [] // player wins
-					// options[2] = [] // no signifance
-					// options[3] = [] // this action causes opponent to win on next turn
-
-				// iterate through each column, 
-				// for(let i = 0; i < that.COLS; i ++) { 
-					// compEmptyCell = findLastEmptyCell(i); 
-					// 	if checkForWinner($compEmptyCell) == 'black', 
-						// options[0].push(compEmptyCell.data('col'))
-					// 	else 
-						// change compEmptyCell.data('player', 'red');
-						// if (checkforWinner($compEmptyCell) == 'red');
-							// options[1].push(compEmptyCell.data('col'));
-				// }
-				//change compEmptyCell.data('player', that.player)
-				
-				// make sure you call $compEmptyCell.removeData('player') after the if statement and 
-				// before starting actual move
-
-				// MISC: might have to create a data attribute for empty and use that in findLastEmptyCell
 
 				function getRandomNum(max) {
 					return Math.floor(Math.random() * Math.floor(max));
 				}
 
-				const allEmptyCells = $('.col.empty');
-				const randEmptyCellIndex = getRandomNum(allEmptyCells.length);
-				const randCell = allEmptyCells[randEmptyCellIndex];
+				let $compEmptyCell;
+				if (options[0].length > 0) {
+					$compEmptyCell = findLastEmptyCell(options[0][getRandomNum(options[0].length)]);
+				} else if (options[1].length > 0) {
+					$compEmptyCell = findLastEmptyCell(options[1][getRandomNum(options[1].length)]);
+				} else if (options[2].length > 0) {
+					$compEmptyCell = findLastEmptyCell(options[2][getRandomNum(options[2].length)]);
+				}
 
-				const compCol = $(randCell).data('col');
-				const $compEmptyCell = findLastEmptyCell(compCol);
 				const $compChild = $compEmptyCell.children();
 				
 				setTimeout(function(){
